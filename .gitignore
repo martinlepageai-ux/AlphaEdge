@@ -1,0 +1,19 @@
+# Keep recovered downloads and local artifacts out of source control.
+*.zip
+.DS_Store
+node_modules/
+dist/
+dist-ssr/
+.run/
+.cache/
+.output/
+.nitro/
+.tanstack/
+.vercel/
+
+# Local credentials and environment configuration.
+.env
+.env.*
+*.pem
+*.key
+*credentials*
