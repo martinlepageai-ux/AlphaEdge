@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * Single source of truth for "is motion allowed".
@@ -68,7 +68,8 @@ export function Reveal({
   className?: string;
   as?: "div" | "section" | "li" | "article" | "header" | "footer";
 }) {
-  const { ref, inView } = useInView<HTMLDivElement>();
+  const { ref, inView } = useInView<HTMLElement>();
+  const setRef = useCallback((element: HTMLElement | null) => { ref.current = element; }, [ref]);
   const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -80,7 +81,7 @@ export function Reveal({
   }, [reduced]);
 
   const props = {
-    ref,
+    ref: setRef,
     className: `reveal ${inView ? "is-in" : ""} ${className}`,
     style: { ["--reveal-delay" as string]: `${delay}ms` } as React.CSSProperties,
   };

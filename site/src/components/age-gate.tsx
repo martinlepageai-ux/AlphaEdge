@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 const STORAGE_KEY = "alphaedge.age-verified.v1";
 
 /**
- * 21+ gate. Shows once, remembers the answer locally, never asks again.
+ * Client-side 21+ self-attestation stored locally, not identity/age verification.
+ * It can be bypassed; SSR content remains accessible without this overlay.
  * Renders nothing during SSR/first paint so the server and client markup match.
  */
 export function AgeGate() {

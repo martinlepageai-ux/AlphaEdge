@@ -108,7 +108,7 @@ function TrackRecord() {
           <StatTile
             label="Break-even win rate"
             value={formatPct(summary.breakevenWinRate * 100, 1)}
-            sub={`at an avg price of ${formatAmerican(summary.avgAmericanOdds)}`}
+            sub="stake-weighted mean of implied probabilities"
           />
           <StatTile
             label="Picks graded"

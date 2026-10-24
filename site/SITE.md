@@ -1,7 +1,7 @@
 # Your site
 
 This is the team's website. It's a [TanStack Start](https://tanstack.com/start)
-app (React + Vite + Tailwind), served on **port 3000**. It starts life as a simple
+app (React + Vite + Tailwind), served on **loopback port 3000 by default**. It starts life as a simple
 "coming soon" placeholder (the headline reads the business name from `site.json` at
 request time), but it's a real full-stack framework — build it out into the real
 site and grow it into a dynamic app without changing hosting or starting a second
@@ -15,7 +15,7 @@ src/
     __root.tsx     # the HTML shell: <head>, fonts, global layout
     index.tsx      # the landing page ("/")
   styles/app.css   # Tailwind entrypoint + base styles
-vite.config.ts     # serves on 0.0.0.0:3000
+vite.config.ts     # defaults to 127.0.0.1:3000
 ```
 
 Add a page by creating a new file under `src/routes/` — e.g. `about.tsx` becomes
@@ -80,9 +80,60 @@ database rather than writing to files:
    });
    ```
 
-`DATABASE_URL` is in your environment automatically once set, and it reaches the
-published site too — saving or changing it restarts the live site with the new value
-within seconds, no republish needed. The same code works in the preview and in
-production. (On external hosting via `bun run go-live`, re-run it after it is set so
-that host picks up `DATABASE_URL`.) One database serves both the preview and the live
-site.
+For local database use, supply `DATABASE_URL` in the server environment. External
+hosting needs its own explicitly authorized runtime configuration; this repository
+does not automatically synchronize secrets, provision a database, or restart a host.
+The demonstration provider does not require a database.
+
+## Local operation and safeguards
+
+Use the checked-in Bun lockfile: `bun install --frozen-lockfile`, then
+`bun run dev` or `bun run build && bun run start`. Development, preview and the
+built server default to `127.0.0.1:3000`. If that port is occupied, select another
+explicitly, for example `PORT=4312 bun run start`. Startup fails without stopping
+or replacing the existing listener. `bun run publish` now builds and serves in
+the foreground; it does not background a replacement process or claim success
+from a different service already answering on the port.
+
+`HOST` accepts an explicit IP address or `localhost`. Binding to a non-loopback
+address is an intentional operator choice, not the default. Host checks permit
+only localhost/loopback names unless `ALPHAEDGE_ALLOWED_HOSTS` supplies additional
+comma-separated exact hostnames, for example `demo.example.com`. Wildcards,
+leading-dot suffix matches, URL schemes and ports are rejected. No public
+hosting, reverse proxy, TLS or access controls have been configured by these fixes.
+
+Run `bun test`, `bun run build`, then `bun run typecheck`. The build generates
+`src/routeTree.gen.ts`, which is ignored by Git. Tests use disposable local servers
+and mock deployment executables; they never deploy or change access settings.
+
+## Explicit deployment target
+
+`go-live.sh` requires an existing `VERCEL_PROJECT_ID` (`prj_...`) and explicit
+`VERCEL_ORG_ID` (`team_...`). It does not infer either from the folder name,
+account's default team, or the first team returned by an API. Preview the plan
+without a token, build or network call:
+
+```bash
+VERCEL_PROJECT_ID=prj_example VERCEL_ORG_ID=team_example bash go-live.sh --dry-run
+```
+
+An actual deployment additionally requires `VERCEL_TOKEN` and an already installed,
+reviewed Vercel CLI. It creates a preview deployment for that explicit target;
+it never disables SSO/protection or changes public access. Runtime secrets must
+already be configured for that project through a separately authorized process.
+No actual deployment has been validated here. Vercel documents the target variables
+and scope in [its CLI guidance](https://vercel.com/changelog/faster-predictable-project-linking-in-the-vercel-cli).
+
+## Demo and age-gate limits
+
+The seeded odds and results remain fictional demonstration data. The age overlay
+is a client-side self-attestation stored in browser localStorage. It is not
+identity or age verification, can be bypassed or modified, and does not prevent
+access to server-rendered content, assets or endpoints. It does not establish
+jurisdictional eligibility or regulatory compliance. Production access controls
+would require a separate design and review.
+
+The track-record break-even tile is the stake-weighted mean of each pick's implied
+probability: `sum(units / decimalOdds) / sum(units)`. It is not the reciprocal of
+the average displayed price, nor a guarantee of flat P&L at that overall win rate
+when the odds and stakes vary. Actual P&L depends on which picks win.

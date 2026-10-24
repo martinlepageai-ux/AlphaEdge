@@ -153,10 +153,10 @@ export function averageAmericanOdds(americanPrices: number[]): number {
 }
 
 /**
- * Stake-weighted break-even win rate for a book of picks: the win rate you
- * would need at the prices actually taken to come out flat. Weighting by units
- * risked is what makes it honest — it is the number a staking plan is judged
- * against, unlike a single average price across short and long shots.
+ * Stake-weighted mean of each pick's implied break-even probability:
+ * sum(units / decimalOdds) / sum(units). This is a descriptive benchmark,
+ * not a universal win-rate threshold guaranteeing flat P&L for mixed prices;
+ * realized profit also depends on which picks win and their stakes.
  */
 export function breakevenWinRateForPicks(rows: { odds: number; units: number }[]): number {
   let weighted = 0;
